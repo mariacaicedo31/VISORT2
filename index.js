@@ -33,18 +33,22 @@ var editarBtn = null;
 var lat, lng;
 var editar = true;
 var nuevoMarcador = null;
+var parques = [];
+var restaurantes = [];
+var bares = [];
+var routingControl = null;
 
 //Todo esto se ejecuta despues de cargar el html
 window.addEventListener("DOMContentLoaded", function () {
   // Realiza una petición GET al backend local para obtener todos los puntos
   getPuntos();
-
+  rutaBtn = document.getElementById("ruta-btn");
+  rutaBtn.addEventListener("click", crearRuta);
   editarBtn = document.getElementById("editar-btn");
   editarBtn.addEventListener("click", editarPunto);
 });
 
 function editarPunto() {
-  console.log('btn', selectedPunto);
   // Obtener los nuevos valores de los campos del formulario
   var nombre = document.getElementById("nombre").value;
   var tipo = document.getElementById("tipo").value;
@@ -118,8 +122,9 @@ function editarPunto() {
         llenarCampos(updatedPunto);
 
         deshabilitarCampos(true);
-        
-        agregarClickMarcador(nuevoMarcador, updatedPunto)
+
+        crearMarcador(updatedPunto);
+        // agregarClickMarcador(nuevoMarcador, updatedPunto)
       })
       .catch(function (error) {
         console.error("Error de conexión:", error);
@@ -165,9 +170,8 @@ function getPuntos() {
     .then(function (data) {
       // Se recorre todos los puntos que vienen de base de datos para ponerlos en el mapa
       data.forEach(punto => {
-        var marker = L.marker([parseFloat(punto.cy), parseFloat(punto.cx)]).addTo(mapa);
-        marker.bindPopup("<b>" + punto.nombre + "</b><br>" + punto.descripcion);
-        agregarClickMarcador(marker, punto);
+        console.log(punto)
+        crearMarcador(punto)
       });
     })
     .catch(function (error) {
@@ -209,10 +213,54 @@ function agregarClickMarcador(marcador, punto) {
     editar = true;
     selectedPunto = punto
     marcador.bindPopup("<b>" + punto.nombre + "</b><br>" + punto.descripcion);
-    console.log("Información del marcador:", punto);
 
     llenarCampos(punto);
 
     deshabilitarCampos(false);
   });
+}
+
+function crearMarcador(punto) {
+  let marker = null;
+  if (punto.tipo == "bar") {
+    bares.push(punto)
+    marker = L.marker([parseFloat(punto.cy), parseFloat(punto.cx)], { icon: goldIcon }).addTo(mapa);
+  }
+  else if (punto.tipo == "restaurante") {
+    restaurantes.push(punto)
+    marker = L.marker([parseFloat(punto.cy), parseFloat(punto.cx)], { icon: orangeIcon }).addTo(mapa);
+  }
+  else if (punto.tipo == "parque") {
+    parques.push(punto)
+    console.log("test", parques)
+    marker = L.marker([parseFloat(punto.cy), parseFloat(punto.cx)], { icon: greenIcon }).addTo(mapa);
+  }
+  else {
+    marker = L.marker([parseFloat(punto.cy), parseFloat(punto.cx)]).addTo(mapa);
+  }
+  marker.bindPopup("<b>" + punto.nombre + "</b><br>" + punto.descripcion);
+  agregarClickMarcador(marker, punto);
+}
+
+function crearRuta() {
+  if(routingControl){
+    mapa.removeControl(routingControl);
+    routingControl = null;
+  }
+  let tipoRuta = document.getElementById("tipo-ruta").value;
+  let list = []
+  console.log('parques', parques)
+  if (tipoRuta == "bar") {
+    list = bares
+  }
+  else if (tipoRuta == "restaurante") {
+    list = restaurantes
+  }
+  else if (tipoRuta == "parque") {
+    list = parques
+  }
+
+  routingControl = L.Routing.control({
+    waypoints: list.map(punto => L.latLng(punto.cy, punto.cx))
+  }).addTo(mapa);
 }

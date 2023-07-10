@@ -19,62 +19,85 @@
     <link rel="stylesheet" type="text/css" href="leaflet-betterscale-master/L.Control.BetterScale.css">
     <link rel="stylesheet" type="text/css"
         href="leaflet-groupedlayercontrol-gh-pages/dist/leaflet.groupedlayercontrol.min.css">
+    <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/leaflet-routing-machine/dist/leaflet-routing-machine.css" />
+    <script src="https://cdn.jsdelivr.net/npm/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
     <title>Comuna</title>
 </head>
 
-<body class="bg-dark text-white">
+<body>
     <div class="container-fluid mb-5">
-        <h1 class="text-center my-5">Geovisor creado con Leaflet</h1>
+        <h1 class="text-center my-5">Geovisor puntos de interés en Santiago de Cali</h1>
     </div>
     <div class="d-flex justify-content-center texm">
         <div class="col-8">
-            <p>El siguiente geovisor contiene un mapa de algunos restaurantes y bares en
-                la comuna 1 en Santiago de Cali</p>
+            <p>El siguiente geovisor contiene un mapa de los parques, bares
+                y restaurantes creados por el usuario en Santiago de Cali, además contiene opciones como la edición y creación
+                de puntos y la generación de rutas. </p>
 
         </div>
     </div>
     <div class="d-flex justify-content-center texm">
-       <div class="col-8">
-           <p>
-               Para hacer un uso correcto del geovisor es necesario tener en cuenta las siguientes instrucciones:
-           </p>
+        <div class="col-8">
+            <p>
+                Para hacer un uso correcto del geovisor es necesario tener en cuenta las siguientes instrucciones:
+            </p>
 
-       </div>
-     
+        </div>
+
     </div>
     <div class="d-flex justify-content-center texm">
-       <div class="col-8">
-           <p>
-               Creación de un marcador:
-           </p>
+        <div class="col-8">
+            <p>
+                Creación de un marcador:
+            </p>
 
-       </div>
-     
+        </div>
+
     </div>
     <div class="d-flex justify-content-center texm">
         <div class="col-8">
             <ul>
                 <li>Dar click derecho sobre el mapa.</li>
-                <li>Para asignarle informacion a dicho marcador se debe hacer uso de los campos asignados en el formulario.</li>
+                <li>Para asignarle informacion a dicho marcador se debe hacer uso de los campos asignados en el
+                    formulario.</li>
                 <li>Hacer Click en el botón "crear"</li>
             </ul>
         </div>
     </div>
     <div class="d-flex justify-content-center texm">
-       <div class="col-8">
-           <p>
-               Edición de un marcador:
-           </p>
+        <div class="col-8">
+            <p>
+                Edición de un marcador:
+            </p>
 
-       </div>
-     
+        </div>
+
     </div>
     <div class="d-flex justify-content-center texm">
         <div class="col-8">
             <ul>
                 <li>Dar click sobre el marcador que desee editar.</li>
-                <li>Para editar la informacion de dicho marcador se debe hacer uso de los campos asignados en el formulario.</li>
+                <li>Para editar la informacion de dicho marcador se debe hacer uso de los campos asignados en el
+                    formulario.</li>
                 <li>Hacer Click en el botón "editar"</li>
+            </ul>
+        </div>
+    </div>
+    <div class="d-flex justify-content-center texm">
+        <div class="col-8">
+            <p>
+                Crear Ruta:
+            </p>
+
+        </div>
+
+    </div>
+    <div class="d-flex justify-content-center texm">
+        <div class="col-8">
+            <ul>
+                <li>Seleccionar una opcion en la seccion de 'Ruta'Dar click sobre el marcador que desee editar.</li>
+                <li>Hacer Click en el botón "Generar Ruta"</li>
             </ul>
         </div>
     </div>
@@ -86,27 +109,55 @@
     <script src="Leaflet-MiniMap-master/dist/Control.MiniMap.min.js"></script>
     <script src="leaflet-betterscale-master/L.Control.BetterScale.js"></script>
     <script src="leaflet-groupedlayercontrol-gh-pages/dist/leaflet.groupedlayercontrol.min.js"></script>
+    <script src="js/leaflet-color-markers.js"></script>
     <script src="index.js"></script>
 
-    <div class="d-flex justify-content-center">
-        <form id="punto-form" class="shadow-form col-4 p-3 mt-5">
-            <label for="nombre">Nombre:</label>
-            <input type="text" class="form-control" id="nombre" name="nombre" readonly>
-            <br>
-            <label for="tipo">Tipo:</label>
-            <input type="text" class="form-control" id="tipo" name="tipo" readonly>
-            <br>
-            <label for="descripcion">Descripcion:</label>
-            <input type="text" class="form-control" id="descripcion" name="descripcion" readonly>
-            <br>
-            <label for="cx">Coordenada x:</label>
-            <input type="text" class="form-control" id="cx" name="cx" readonly>
-            <br>
-            <label for="cy">Coordenada y:</label>
-            <input type="text" class="form-control" id="cy" name="cy" readonly>
-            <br>
-            <button class="btn btn-primary" class="form-control" id="editar-btn" type="button">Editar</button>
-        </form>
+
+    <div class="row">
+        <div class="col">
+            <div class="d-flex justify-content-center">
+                <form id="punto-form" class="shadow-form col-10 p-3 mt-5">
+                    <label for="nombre">Nombre:</label>
+                    <input type="text" class="form-control" id="nombre" name="nombre" readonly>
+                    <br>
+                    <label for="tipo">Tipo:</label>
+                    <select id="tipo" class="form-select" aria-label="Default select example">
+                        <option selected>Seleccione una opción</option>
+                        <option value="restaurante">Restaurante</option>
+                        <option value="bar">Bar</option>
+                        <option value="parque">Parque</option>
+                    </select>
+                    <br>
+                    <label for="descripcion">Descripcion:</label>
+                    <input type="text" class="form-control" id="descripcion" name="descripcion" readonly>
+                    <br>
+                    <label for="cx">Coordenada x:</label>
+                    <input type="text" class="form-control" id="cx" name="cx" readonly>
+                    <br>
+                    <label for="cy">Coordenada y:</label>
+                    <input type="text" class="form-control" id="cy" name="cy" readonly>
+                    <br>
+                    <button class="btn btn-primary" class="form-control" id="editar-btn" type="button">Editar</button>
+                </form>
+            </div>
+        </div>
+        <div class="col">
+
+            <div class="d-flex justify-content-center">
+                <form id="ruta-form" class="shadow-form col-10 p-3 mt-5">
+                    <label for="tipo-ruta">Ruta:</label>
+                    <select id="tipo-ruta" class="form-select" aria-label="Default select example">
+                        <option selected>Seleccione una opción</option>
+                        <option value="restaurante">Restaurante</option>
+                        <option value="bar">Bar</option>
+                        <option value="parque">Parque</option>
+                    </select>
+                    <br>
+                    <button class="btn btn-primary" class="form-control" id="ruta-btn" type="button">Generar
+                        Ruta</button>
+                </form>
+            </div>
+        </div>
     </div>
 </body>
 
